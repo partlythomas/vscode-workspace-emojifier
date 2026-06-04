@@ -22,3 +22,7 @@ Or use the short flag:
 ```
 
 The script will randomly assign emojis to each folder and update the workspace file in-place.
+
+## Example Output
+
+![Example workspace with emojis](example.png)
