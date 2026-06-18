@@ -65,8 +65,12 @@ const shuffled = [...emojis].sort(() => Math.random() - 0.5);
 let emojiIndex = 0;
 
 content.folders = content.folders.map(folder => {
-  // Strip existing leading emoji from name or path
-  const baseName = (folder.name ?? folder.path).replace(/^[\p{Emoji}\s]+/u, '').trim();
+  // Strip existing leading emoji(s) from name or path.
+  // We only strip non-word, non-space characters at the start (emoji codepoints,
+  // variation selectors, ZWJ, etc.) followed by any spaces. This avoids the
+  // problem where \p{Emoji} matches ASCII digits and '#'/'*'.
+  const raw = folder.name ?? folder.path;
+  const baseName = raw.replace(/^[^\w\s]+\s*/u, '').trim();
 
   let emoji;
   do {
