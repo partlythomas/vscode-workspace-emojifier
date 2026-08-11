@@ -5,7 +5,7 @@ Simple bash script to add random emojis to folder names in a Visual Studio Code 
 ## Install
 
 ```bash
-curl -o ~/.local/bin/workspace-add-emoji https://raw.githubusercontent.com/partly-cloud/vscode-workspace-emojifier/main/workspace-add-emoji.sh && chmod +x ~/.local/bin/workspace-add-emoji
+curl -fo ~/.local/bin/workspace-add-emoji https://raw.githubusercontent.com/partlythomas/vscode-workspace-emojifier/main/workspace-add-emoji.sh && chmod +x ~/.local/bin/workspace-add-emoji
 ```
 
 Make sure `~/.local/bin` is in your `PATH`.
