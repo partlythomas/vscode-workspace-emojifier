@@ -28,7 +28,10 @@ done
 
 if [[ -z "$WORKSPACE_FILE" ]]; then
   # Auto-discover: check current dir, then parent
-  mapfile -t candidates < <(find . .. -maxdepth 1 -name '*.code-workspace' 2>/dev/null)
+  candidates=()
+  while IFS= read -r -d '' f; do
+    candidates+=("$f")
+  done < <(find . .. -maxdepth 1 -name '*.code-workspace' -print0 2>/dev/null)
 
   if [[ ${#candidates[@]} -eq 0 ]]; then
     echo "Error: No .code-workspace file found in . or .." >&2
