@@ -11,10 +11,10 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --help|-h)
-      echo "Usage: $0 --workspace|-w <path>" >&2
+      echo "Usage: $0 [--workspace|-w <path>]" >&2
       echo "" >&2
       echo "Options:" >&2
-      echo "  --workspace, -w <path>  Path to the workspace file (required)" >&2
+      echo "  --workspace, -w <path>  Path to the workspace file (auto-detected if omitted)" >&2
       echo "  --help, -h              Show this help message" >&2
       exit 0
       ;;
@@ -27,9 +27,28 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$WORKSPACE_FILE" ]]; then
-  echo "Error: --workspace flag is required" >&2
-  echo "Usage: $0 --workspace|-w <path>" >&2
-  exit 1
+  # Auto-discover: check current dir, then parent
+  mapfile -t candidates < <(find . .. -maxdepth 1 -name '*.code-workspace' 2>/dev/null)
+
+  if [[ ${#candidates[@]} -eq 0 ]]; then
+    echo "Error: No .code-workspace file found in . or .." >&2
+    echo "Specify one with --workspace <path>" >&2
+    exit 1
+  elif [[ ${#candidates[@]} -eq 1 ]]; then
+    WORKSPACE_FILE="${candidates[0]}"
+  else
+    echo "Multiple workspace files found:" >&2
+    for i in "${!candidates[@]}"; do
+      echo "  $((i+1))) ${candidates[$i]}" >&2
+    done
+    echo -n "Pick one: " >&2
+    read -r choice
+    if [[ "$choice" -lt 1 || "$choice" -gt ${#candidates[@]} ]] 2>/dev/null; then
+      echo "Invalid choice" >&2
+      exit 1
+    fi
+    WORKSPACE_FILE="${candidates[$((choice-1))]}"
+  fi
 fi
 
 if [[ ! -f "$WORKSPACE_FILE" ]]; then
